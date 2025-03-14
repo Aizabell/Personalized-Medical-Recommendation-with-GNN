@@ -88,7 +88,3 @@ If you use this work, please cite:
   year    = {2018}
 }
 ```
-
----
-
-This **README.md** file provides a structured overview of our project, ensuring clarity for future work on **graph construction and GAT model training**. Let me know if you need any modifications! 🚀
