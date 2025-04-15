@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Medication Recommendation</title>
+</head>
+<body>
+    <h1>Enter New Patient Details</h1>
+    {% if error %}
+      <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    <form method="post">
+        <label for="age">Age:</label>
+        <input type="text" name="age" required><br>
+        <label for="gender">Gender (0/1):</label>
+        <input type="text" name="gender" required><br>
+        <label for="ethnicity">Ethnicity (0/1):</label>
+        <input type="text" name="ethnicity" required><br>
+        <button type="submit">Predict Medications</button>
+    </form>
+
+    {% if results %}
+      <h2>Recommendations</h2>
+      <ul>
+      {% for result in results %}
+          <li>{{ result.medication }}: Score {{ result.score }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+</body>
+</html>
