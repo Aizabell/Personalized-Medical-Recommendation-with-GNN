@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drug Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light py-4">
+
+<div class="container">
+    <h1 class="mb-4">🧠 AI Drug Recommendation</h1>
+
+    <form method="post" class="bg-white p-4 rounded shadow-sm">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Age</label>
+            <input type="number" name="age" class="form-control" step="0.01" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label d-block">Gender</label>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="gender" value="1" id="genderM" required>
+                <label class="form-check-label" for="genderM">Male</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="gender" value="0" id="genderF">
+                <label class="form-check-label" for="genderF">Female</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ethnicity</label>
+            <select name="ethnicity" class="form-select" required>
+                {% for label in ethnicity_choices %}
+                    <option value="{{ label }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Admission Type</label>
+            <select name="admission_type" class="form-select" required>
+                {% for label in admission_type_choices %}
+                    <option value="{{ label }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Diseases</label>
+          <div class="form-check" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+            {% for label in disease_choices %}
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="diseases" value="{{ label }}" id="disease_{{ forloop.counter }}">
+                <label class="form-check-label" for="disease_{{ forloop.counter }}">{{ label }}</label>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      
+        <div class="mb-3">
+          <label class="form-label">Procedures</label>
+          <div class="form-check" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+            {% for label in procedure_choices %}
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="procedures" value="{{ label }}" id="procedure_{{ forloop.counter }}">
+                <label class="form-check-label" for="procedure_{{ forloop.counter }}">{{ label }}</label>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      
+        <div class="mb-3">
+            <label class="form-label">Length of Stay</label>
+            <input type="number" name="length_of_stay" class="form-control" step="0.1" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Lab Values</label>
+            <div id="lab-values">
+                <input type="number" name="lab_vals" class="form-control mb-2" step="0.01">
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addLabInput()">➕ Add Lab Value</button>
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3">🔍 Predict</button>
+    </form>
+
+    {% if top_results %}
+      <h4 class="mt-5">🧪 Top Predicted Drugs:</h4>
+      <ul class="list-group">
+        {% for result in top_results %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ result.drug }}</span>
+            <span class="badge bg-primary rounded-pill">{{ result.prob }}%</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+</div>
+
+<script>
+    function addLabInput() {
+        const newInput = document.createElement("input");
+        newInput.type = "number";
+        newInput.name = "lab_vals";
+        newInput.className = "form-control mt-2";
+        newInput.step = "0.01";
+        document.getElementById("lab-values").appendChild(newInput);
+    }
+</script>
+
+</body>
+</html>
