@@ -53,7 +53,7 @@ To prepare the dataset for graph-based modeling, the following preprocessing ste
 
 A **heterogeneous medical graph** will be used to model the relationships between entities:
 
-![Graph Representation](graph_structure.png)
+![Graph Representation](images/graph_structure.png)
 
 - **Nodes:** Patients, Diseases, Medications, Procedures, Lab Events  
 - **Edges:** `Diagnosed_with`, `Prescribed`, `Underwent`, `Has_Test`  
