@@ -1,0 +1,409 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drug Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light py-4">
+
+<div class="container">
+    <h1 class="mb-4">🧠 AI Drug Recommendation</h1>
+
+    <form method="post" class="bg-white p-4 rounded shadow-sm">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Age</label>
+            <input type="number" name="age" class="form-control" step="0.01" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label d-block">Gender</label>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="gender" value="1" id="genderM" required>
+                <label class="form-check-label" for="genderM">Male</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="gender" value="0" id="genderF">
+                <label class="form-check-label" for="genderF">Female</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ethnicity</label>
+            <select name="ethnicity" class="form-select" required>
+                {% for label in ethnicity_choices %}
+                    <option value="{{ label }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Admission Type</label>
+            <select name="admission_type" class="form-select" required>
+                {% for label in admission_type_choices %}
+                    <option value="{{ label }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Diseases</label>
+          <div class="row gx-2">
+            <!-- left: search + options -->
+            <div class="col-md-6">
+              <input
+                type="text"
+                id="disease-search"
+                class="form-control mb-2"
+                placeholder="Search diseases…"
+              >
+              <div
+                id="disease-options"
+                style="max-height:200px; overflow-y:auto; border:1px solid #ddd; padding:10px; border-radius:5px;"
+              >
+                {% for label in disease_choices %}
+                  <div class="form-check disease-item">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      name="diseases"
+                      value="{{ label }}"
+                      id="disease_{{ forloop.counter }}"
+                    >
+                    <label class="form-check-label" for="disease_{{ forloop.counter }}">
+                      {{ label }}
+                    </label>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+        
+            <!-- right: selected tags -->
+            <div class="col-md-6">
+              <label class="form-label">Selected diseases</label>
+              <div
+                id="disease-selected"
+                style="min-height:200px; border:1px solid #ddd; padding:10px; border-radius:5px;"
+              >
+                <!-- JS will inject chosen items here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+      
+        <!-- PROCEDURES PICKER -->
+        <div class="mb-4">
+          <label class="form-label">Procedures</label>
+          <div class="row gx-2">
+            <!-- left: search + options -->
+            <div class="col-md-6">
+              <input
+                type="text"
+                id="procedure-search"
+                class="form-control mb-2"
+                placeholder="Search procedures…"
+              >
+              <div
+                id="procedure-options"
+                style="max-height:200px; overflow-y:auto; border:1px solid #ddd; padding:10px; border-radius:5px;"
+              >
+                {% for label in procedure_choices %}
+                  <div class="form-check procedure-item">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      name="procedures"
+                      value="{{ label }}"
+                      id="procedure_{{ forloop.counter }}"
+                    >
+                    <label class="form-check-label" for="procedure_{{ forloop.counter }}">
+                      {{ label }}
+                    </label>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- right: selected tags -->
+            <div class="col-md-6">
+              <label class="form-label">Selected procedures</label>
+              <div
+                id="procedure-selected"
+                style="min-height:200px; border:1px solid #ddd; padding:10px; border-radius:5px;"
+              >
+                <!-- JS will inject chosen items here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      
+        <div class="mb-3">
+            <label class="form-label">Length of Stay</label>
+            <input type="number" name="length_of_stay" class="form-control" step="0.1" required>
+        </div>
+
+        <!-- ─── Lab Values Picker ─── -->
+        <div class="mb-4">
+          <label class="form-label">Lab Values</label>
+
+          <!-- Selected entries -->
+          <table class="table table-sm" id="lab-values-table">
+            <thead>
+              <tr>
+                <th>Test Name</th>
+                <th>Value</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- JS will inject rows here -->
+            </tbody>
+          </table>
+
+          <!-- Button to open modal -->
+          <button type="button"
+                  class="btn btn-outline-primary btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#labModal">
+            ➕ Add Lab Value
+          </button>
+        </div>
+
+        <!-- ─── Lab Value Modal ─── -->
+        <div class="modal fade" id="labModal" tabindex="-1" aria-labelledby="labModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+              <div class="modal-header">
+                <h5 class="modal-title" id="labModalLabel">Add Lab Value</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+
+              <div class="modal-body">
+                <!-- Search -->
+                <div class="mb-3">
+                  <input type="text"
+                        id="lab-search"
+                        class="form-control"
+                        placeholder="Search lab tests…">
+                </div>
+
+                <!-- Scrollable list of radio buttons -->
+                <div class="mb-3"
+                    style="max-height:200px; overflow-y:auto; border:1px solid #ddd; padding:10px; border-radius:5px;">
+                  {% for test in labtest_choices %}
+                    <div class="form-check lab-test-item">
+                      <input class="form-check-input"
+                            type="radio"
+                            name="lab_test"
+                            id="lab_test_{{ forloop.counter }}"
+                            value="{{ test }}">
+                      <label class="form-check-label" for="lab_test_{{ forloop.counter }}">
+                        {{ test }}
+                      </label>
+                    </div>
+                  {% endfor %}
+                </div>
+
+                <!-- Numeric input -->
+                <div class="mb-3">
+                  <input type="number"
+                        id="lab-value-input"
+                        class="form-control"
+                        step="0.01"
+                        placeholder="Enter value…">
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                  Cancel
+                </button>
+                <button type="button"
+                        class="btn btn-primary"
+                        onclick="addLabEntry()">
+                  Add
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3">🔍 Predict</button>
+    </form>
+
+    {% if top_results %}
+      <h4 class="mt-5">🧪 Top Predicted Drugs:</h4>
+      <ul class="list-group">
+        {% for result in top_results %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ result.drug }}</span>
+            <span class="badge bg-primary rounded-pill">{{ result.prob }}%</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function addLabInput() {
+        const newInput = document.createElement("input");
+        newInput.type = "number";
+        newInput.name = "lab_vals";
+        newInput.className = "form-control mt-2";
+        newInput.step = "0.01";
+        document.getElementById("lab-values").appendChild(newInput);
+    }
+    
+    function updateSelectedDiseases() {
+      const selectedContainer = document.getElementById('disease-selected');
+      selectedContainer.innerHTML = '';  // clear
+
+      document.querySelectorAll('#disease-options .form-check-input:checked')
+        .forEach(cb => {
+          const labelText = cb
+            .closest('.form-check')
+            .querySelector('label')
+            .textContent.trim();
+
+          // build a badge + close‑button
+          const badge = document.createElement('span');
+          badge.className = 'badge bg-secondary me-1 mb-1 d-inline-flex align-items-center';
+          badge.textContent = labelText;
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.innerHTML = '&times;';
+          btn.className = 'btn-close btn-close-white btn-sm ms-2';
+          btn.onclick = () => {
+            cb.checked = false;
+            updateSelectedDiseases();
+          };
+
+          badge.appendChild(btn);
+          selectedContainer.appendChild(badge);
+        });
+    }
+
+    // wire up checkbox changes
+    document.querySelectorAll('#disease-options .form-check-input')
+      .forEach(cb => cb.addEventListener('change', updateSelectedDiseases));
+
+    // 2) search/filter the left column
+    document.getElementById('disease-search')
+      .addEventListener('input', e => {
+        const q = e.target.value.trim().toLowerCase();
+        document.querySelectorAll('#disease-options .disease-item')
+          .forEach(item => {
+            const text = item.querySelector('label').textContent.toLowerCase();
+            item.style.display = text.includes(q) ? 'block' : 'none';
+          });
+      });
+
+    function updateSelectedProcedures() {
+      const container = document.getElementById('procedure-selected');
+      container.innerHTML = '';
+      document
+        .querySelectorAll('#procedure-options .form-check-input:checked')
+        .forEach(cb => {
+          const text = cb
+            .closest('.form-check')
+            .querySelector('label')
+            .textContent.trim();
+
+          const badge = document.createElement('span');
+          badge.className = 'badge bg-secondary me-1 mb-1 d-inline-flex align-items-center';
+          badge.textContent = text;
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.innerHTML = '&times;';
+          btn.className = 'btn-close btn-close-white btn-sm ms-2';
+          btn.onclick = () => {
+            cb.checked = false;
+            updateSelectedProcedures();
+          };
+
+          badge.appendChild(btn);
+          container.appendChild(badge);
+        });
+    }
+
+    // wire up checkbox changes
+    document
+      .querySelectorAll('#procedure-options .form-check-input')
+      .forEach(cb => cb.addEventListener('change', updateSelectedProcedures));
+
+    // search/filter the left column
+    document
+      .getElementById('procedure-search')
+      .addEventListener('input', e => {
+        const q = e.target.value.trim().toLowerCase();
+        document
+          .querySelectorAll('#procedure-options .procedure-item')
+          .forEach(item => {
+            const txt = item.querySelector('label').textContent.toLowerCase();
+            item.style.display = txt.includes(q) ? 'block' : 'none';
+          });
+      });
+    document.getElementById('lab-search')
+      .addEventListener('input', function(e) {
+        const q = e.target.value.toLowerCase();
+        document.querySelectorAll('#labModal .lab-test-item')
+          .forEach(item => {
+            const txt = item.querySelector('label').textContent.toLowerCase();
+            item.style.display = txt.includes(q) ? 'block' : 'none';
+          });
+      });
+
+    // Add a new row to the table
+    function addLabEntry() {
+      const sel = document.querySelector('input[name="lab_test"]:checked');
+      const val = document.getElementById('lab-value-input').value.trim();
+
+      if (!sel || !val) {
+        return alert('Please select a lab test and enter its value');
+      }
+
+      const test = sel.value;
+      const tbody = document.querySelector('#lab-values-table tbody');
+
+      // create row
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          ${test}
+          <input type="hidden" name="lab_tests" value="${test}">
+        </td>
+        <td>
+          ${val}
+          <input type="hidden" name="lab_vals" value="${val}">
+        </td>
+        <td>
+          <button type="button" class="btn-close" aria-label="Remove"></button>
+        </td>
+      `;
+      // remove action
+      tr.querySelector('.btn-close').onclick = () => tr.remove();
+
+      tbody.appendChild(tr);
+
+      // reset & close modal
+      sel.checked = false;
+      document.getElementById('lab-value-input').value = '';
+      bootstrap.Modal.getInstance(document.getElementById('labModal')).hide();
+    }
+</script>
+
+</body>
+</html>

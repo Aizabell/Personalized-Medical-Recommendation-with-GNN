@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import torch
 import joblib
-import json
+import json , os
 import numpy as np
 from .model import DeepMultiLabelNet
 
@@ -20,6 +20,9 @@ with open("predictor/model/disease_category_mapping.json") as f:
     disease_map = json.load(f)
 with open("predictor/model/procedure_category_mapping.json") as f:
     procedure_map = json.load(f)
+    
+with open("predictor/model/labtests.json") as f:
+    lab_tests = json.load(f)
 
 scaler = joblib.load("predictor/model/scaler_valuenum_labevents.pkl")
 mlb = joblib.load("predictor/model/mlb_encoder.pkl")
@@ -73,7 +76,8 @@ def predict_view(request):
             'ethnicity_choices': list(ethnicity_map.keys()),
             'admission_type_choices': list(admission_map.keys()),
             'disease_choices': list(disease_map.keys()),
-            'procedure_choices': list(procedure_map.keys())
+            'procedure_choices': list(procedure_map.keys()),
+            'labtest_choices': lab_tests
         })
 
     # GET request
@@ -81,7 +85,8 @@ def predict_view(request):
         'ethnicity_choices': list(ethnicity_map.keys()),
         'admission_type_choices': list(admission_map.keys()),
         'disease_choices': list(disease_map.keys()),
-        'procedure_choices': list(procedure_map.keys())
+        'procedure_choices': list(procedure_map.keys()),
+        'labtest_choices': lab_tests
     })
 
 def home_view(request):
