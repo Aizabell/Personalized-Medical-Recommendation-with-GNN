@@ -65,7 +65,7 @@ def predict_view(request):
         with torch.no_grad():
             preds = model(X_input).numpy()[0]
 
-        top_indices = preds.argsort()[-5:][::-1]
+        top_indices = preds.argsort()[-10:][::-1]
         top_results = [
             {"drug": mlb.classes_[i], "prob": round(preds[i] * 100, 2)}  # probability as %
             for i in top_indices
