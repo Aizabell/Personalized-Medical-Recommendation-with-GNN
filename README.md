@@ -125,6 +125,8 @@ A **heterogeneous medical graph** will be used to model the relationships betwee
 
 ### How to run the app
 
+You are currently limited to use the Lite version of the app, which employs a Feed-Forward Neural Network (FFNN) due to memory constraints—the Graph Neural Network (GNN) version requires 38GB of RAM.
+
 #### Install dependencies
 
 Go to the app directory under Lite Version and run:
