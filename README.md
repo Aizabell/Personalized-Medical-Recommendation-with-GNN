@@ -123,6 +123,21 @@ A **heterogeneous medical graph** will be used to model the relationships betwee
 └── requirements.txt
 ```
 
+### How to run the app
+
+#### Install dependencies
+
+Go to the app directory under Lite Version and run:
+
+```
+   pip install -r requirements.txt
+```
+
+#### Run the Django application
+```
+   python3 manage.py runserver
+```
+
 ### Future Work
 
 * Temporal Modeling: Incorporate sequential information (e.g., disease progression, lab trends) to better reflect real-world clinical timelines.
