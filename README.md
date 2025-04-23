@@ -56,16 +56,80 @@ A **heterogeneous medical graph** will be used to model the relationships betwee
 ![Graph Representation](images/graph_structure.png)
 
 - **Nodes:** Patients, Diseases, Medications, Procedures, Lab Events  
-- **Edges:** `Diagnosed_with`, `Prescribed`, `Underwent`, `Has_Test`  
+- **Edges:** `Diagnosed_with`, `Prescribed`, `Underwent`, `Has_Test` 
 
-## 🚀 Future Work
+## HeteroGNN Architecture
 
-- **Train the GAT model** on the constructed graph.  
-- **Fine-tune hyperparameters** (learning rate, number of attention heads, hidden layers).  
-- **Improve explainability** by analyzing **attention weights** for disease-medication interactions.  
-- **Deploy a recommendation system** for personalized medicine.
+![SAGEConv](images/heterognn_architecture.png)
 
----
+## Workflow Diagram
+
+![Workflow](images/workflow_diagram.png)
+
+## 🚀 Folder Structure of The App
+```
+├── Dockerfile
+├── app
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-311.pyc
+│   │   ├── settings.cpython-311.pyc
+│   │   ├── urls.cpython-311.pyc
+│   │   └── wsgi.cpython-311.pyc
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── db.sqlite3
+├── docker-compose.yml
+├── manage.py
+├── predictor
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-311.pyc
+│   │   ├── admin.cpython-311.pyc
+│   │   ├── apps.cpython-311.pyc
+│   │   ├── model.cpython-311.pyc
+│   │   ├── models.cpython-311.pyc
+│   │   ├── urls.cpython-311.pyc
+│   │   └── views.cpython-311.pyc
+│   ├── admin.py
+│   ├── apps.py
+│   ├── migrations
+│   │   ├── __init__.py
+│   │   └── __pycache__
+│   │       └── __init__.cpython-311.pyc
+│   ├── model
+│   │   ├── admission_type_mapping.json
+│   │   ├── best_f1_model.pth
+│   │   ├── column_index.json
+│   │   ├── disease_category_mapping.json
+│   │   ├── ethnicity_mapping.json
+│   │   ├── labtests 2.json
+│   │   ├── labtests.json
+│   │   ├── mlb_encoder.pkl
+│   │   ├── procedure_category_mapping.json
+│   │   └── scaler_valuenum_labevents.pkl
+│   ├── model.py
+│   ├── models.py
+│   ├── templates
+│   │   └── predictor
+│   │       ├── backup.html
+│   │       ├── home.html
+│   │       └── predict.html
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+└── requirements.txt
+```
+
+### Future Work
+
+* Temporal Modeling: Incorporate sequential information (e.g., disease progression, lab trends) to better reflect real-world clinical timelines.
+
+* Cross-Dataset Evaluation: Validate the model's generalizability across different healthcare datasets and patient populations.
+
+* Model Interpretability: Integrate explainability tools such as attention heatmaps or decision rationale tracing to support clinical trust and adoption.
 
 ### 📜 Citation
 
@@ -81,10 +145,11 @@ If you use this work, please cite:
   year    = {2016}
 }
 
-@article{Velickovic2018gat,
-  author  = {Petar Veličković and Guillem Cucurull and Arantxa Casanova and et al.},
-  title   = {Graph Attention Networks},
-  journal = {ICLR},
-  year    = {2018}
+@inproceedings{hamilton2017inductive,
+  title     = {Inductive Representation Learning on Large Graphs},
+  author    = {Hamilton, William L. and Ying, Rex and Leskovec, Jure},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2017},
+  url       = {https://arxiv.org/abs/1706.02216}
 }
 ```

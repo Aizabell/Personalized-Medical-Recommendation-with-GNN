@@ -3,22 +3,18 @@ version: "3.11"
 services:
   django-app:
     image: harryphoebus/tensor-sydnicate:latest
-    platform: linux/amd64      # Ensure correct architecture for your Linux server
+    platform: linux/amd64
     container_name: ai-drug-app
     restart: always
 
     environment:
-      # Optional: if your settings.py reads ALLOWED_HOSTS from an env var
-      - ALLOWED_HOSTS=0.0.0.0
+      DEBUG=False  # Set DEBUG to False for production
+    command: python manage.py runserver 0.0.0.0:80
 
     labels:
-      # Enable Traefik reverse proxy
       - "traefik.enable=true"
-      # Map Traefik to the internal port 8000 that Django dev server listens on
       - "traefik.http.services.web-st125064.loadbalancer.server.port=8000"
-      # Route based on your domain
-      - "traefik.http.routers.web-st125064.rule=Host(`st125064_group.ml.brain.cs.ait.ac.th`)"
-      # Enable TLS with your certresolver
+      - "traefik.http.routers.web-st125064.rule=Host(`st125064.ml.brain.cs.ait.ac.th`)"
       - "traefik.http.routers.web-st125064.tls=true"
       - "traefik.http.routers.web-st125064.tls.certresolver=staging"
       - "traefik.http.routers.web-st125064.entrypoints=websecure"
