@@ -32,23 +32,6 @@ To prepare the dataset for graph-based modeling, the following preprocessing ste
 4. **Graph Construction (Planned)**  
    - The heterogeneous graph will consist of **nodes** (patients, diseases, medications, procedures, lab events) and **edges** capturing medical interactions (e.g., `diagnosed_with`, `prescribed`, `underwent`, `has_test`).
 
-## 📌 Planned Steps: Graph Construction and Model Training
-
-1. **Graph Construction**  
-   - Construct a **heterogeneous knowledge graph** using PyTorch Geometric.
-   - Define **node embeddings** for patients, diseases, medications, and lab events.
-   - Convert the graph to an **undirected format** to improve message passing.
-
-2. **GAT Model Training (Upcoming)**  
-   - Implement **Graph Attention Networks (GAT)** to learn relationships in the medical graph.
-   - Use **multi-head attention** to weigh different medical interactions.
-   - Train using **cross-entropy loss** with **mini-batch training**.
-
-3. **Evaluation and Baselines**  
-   - Compare GAT against **logistic regression, random forest, and MLP classifiers**.
-   - Use **precision, recall, F1-score, and AUC-ROC** for performance evaluation.
-   - Conduct **ablation studies** to analyze the impact of different features.
-
 ## 📊 Graphical Representation
 
 A **heterogeneous medical graph** will be used to model the relationships between entities:
